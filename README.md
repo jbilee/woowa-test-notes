@@ -12,9 +12,10 @@
 
 - __How to use Java__
   - [List](https://github.com/jbilee/woowa-test-notes#list)
-  - [Date object](https://github.com/jbilee/woowa-test-notes#date-object)
+  - [Map](https://github.com/jbilee/woowa-test-notes#map)
   - [Stream](https://github.com/jbilee/woowa-test-notes#stream)
   - [Text formatting](https://github.com/jbilee/woowa-test-notes#text-formatting)
+  - [Testing](https://github.com/jbilee/woowa-test-notes#testing)
 
 - __[File directory](https://github.com/jbilee/woowa-test-notes#file-directory)__
 
@@ -180,21 +181,21 @@ public enum ErrorMessages {
 import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.util.stream.Collectors;
+import java.util.List;
 
 public class FileReader {
-    public String readContent(String path) {
+    public List<String> readContent(String path) {
         if (path.isEmpty()) {
             throw new IllegalStateException(ErrorMessages.NO_DATA.getMessage());
         }
-        return getString(path);
+        return getStrings(path);
     }
 
-    private String getString(String path) {
+    private List<String> getStrings(String path) {
         try {
             InputStream inputStream = Application.class.getResourceAsStream(path);
             BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream));
-            return reader.lines().collect(Collectors.joining("\n"));
+            return reader.lines().toList();
         } catch (NullPointerException e) {
             throw new IllegalStateException(ErrorMessages.NO_DATA.getMessage());
         }
@@ -202,17 +203,16 @@ public class FileReader {
 }
 ```
 ```java
-import java.util.Arrays;
+import java.util.List;
 import java.util.stream.Stream;
 
 public class DataHandler {
-    private static final String DELIMITER = "\\n";
     private static final int HEADERS = 1;
 
     public Stream<String> readData(String path) {
         FileReader reader = new FileReader();
-        String content = reader.readContent(path);
-        return Arrays.stream(content.split(DELIMITER)).skip(HEADERS);
+        List<String> content = reader.readContent(path);
+        return content.stream().skip(HEADERS); // Select up to how many rows of data to skip
     }
 }
 ```
@@ -235,15 +235,87 @@ public class ApplicationConfig {
 ## List
 Create a list
 ```java
-List<String> numbers = List.of(lottoNumbers.split(LOTTO_SPLIT_DELIMITER));
+List<String> letters = List.of("a", "b"); // Or pass in regular Array []
 ```
-## Date object
-LocalDate object 
-## Stream
-List-stream-list conversion
-## Text formatting
 ```java
-String.format("%,d)
+private final List<String> itemNames = new ArrayList<>(); // Declare an empty List
+```
+
+## Map
+Create a map
+```java
+private final Map<String, List<String>> eventItems = new HashMap<>(); // Declare an empty Map
+```
+
+## Stream
+Filter
+```java
+List<Integer> matchingNumbers = winningNumbers.stream().filter(number -> this.numbers.contains(number)).toList();
+```
+
+Count the number of unique values in a List<T>
+```java
+numbers.stream().distinct().count();
+```
+
+## Text formatting
+Turn integer into string with commas
+```java
+String.format("%,d", value_to_format);
+```
+
+## Testing
+Simple test
+```java
+class InventoryTest {
+    @DisplayName("존재하지 않는 상품을 조회하려고 하면 예외가 발생한다.")
+    @Test
+    void 상품_조회_예외_테스트() {
+        Stream<String> data = Stream.of("탄산수,1200,5,탄산2+1");
+        Inventory inventory = new Inventory(data);
+        String itemName = "편의점";
+        int itemQuantity = 1;
+
+        assertThrows(IllegalArgumentException.class, () -> inventory.findProduct(itemName, itemQuantity));
+    }
+}
+```
+
+Repeating same test with different parameters (ValueSource and CsvSource)
+```java
+@ParameterizedTest
+@ValueSource(strings = {"a", "1", "", " "})
+void 선택지_입력_예외_테스트(String input) {
+    SelectionValidator selectionValidator = new SelectionValidator();
+    assertThrows(IllegalArgumentException.class, () -> selectionValidator.validate(input));
+}
+```
+```java
+@ParameterizedTest
+@CsvSource({"3,true", "5,false", "6,true", "10,false"})
+void 테스트(int someValue, boolean expectedValue) {
+    // ...
+    assertEquals(expectedValue, someMethod(someValue));
+}
+```
+
+Using MethodSource (when CsvSource can't do the job due to commas being reserved in CsvSource arguments, or when complex objects need to be passed as args)
+```java
+class EventTest {
+    @ParameterizedTest
+    @MethodSource("divisorTestArgs")
+    void 프로모션_혜택_갯수_반환_기능_테스트(String data, int expectedValue) {
+        Event event = new Event(data);
+        assertEquals(expectedValue, event.getEligibilityDivisor());
+    }
+
+    static Stream<Arguments> divisorTestArgs() {
+        return Stream.of(
+                Arguments.of("탄산2+1,2,1,2024-01-01,2024-12-31", 3),
+                Arguments.of("반짝할인,1,1,2024-11-01,2024-11-30", 2)
+        );
+    }
+}
 ```
 
 # File directory
