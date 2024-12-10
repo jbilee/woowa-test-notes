@@ -6,7 +6,7 @@
   - [Input loop](https://github.com/jbilee/woowa-test-notes#input-loop)
   - [Regex-based validator](https://github.com/jbilee/woowa-test-notes#regex-based-validator)
   - [Single-value enum](https://github.com/jbilee/woowa-test-notes#single-value-enum)
-  - [Multi-value enum](https://github.com/jbilee/woowa-test-notes#multiple-value-enum)
+  - [Multi-value enum](https://github.com/jbilee/woowa-test-notes#multi-value-enum)
   - [Error message enum](https://github.com/jbilee/woowa-test-notes#error-message-enum)
   - [File reader util](https://github.com/jbilee/woowa-test-notes#file-reader-util)
 
