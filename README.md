@@ -238,13 +238,13 @@ Create a list
 List<String> letters = List.of("a", "b"); // Or pass in regular Array []
 ```
 ```java
-private final List<String> itemNames = new ArrayList<>(); // Declare an empty List
+private List<String> itemNames = new ArrayList<>(); // Declare an empty List
 ```
 
 ## Map
 Create a map
 ```java
-private final Map<String, List<String>> eventItems = new HashMap<>(); // Declare an empty Map
+private Map<String, List<String>> eventItems = new HashMap<>(); // Declare an empty Map
 ```
 
 ## Stream
