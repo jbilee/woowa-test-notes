@@ -317,6 +317,7 @@ class EventTest {
     }
 }
 ```
+Run Gradle test with `gradlew.bat clean test` or `./gradlew.bat clean test`
 
 # File directory
 ![image](https://github.com/user-attachments/assets/1e77df19-d61a-40f4-8ccf-6803b6fc2131)
