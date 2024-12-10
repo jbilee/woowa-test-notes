@@ -1,8 +1,8 @@
 # Quick jump
 - __Snippets__
-  - [MissionUtils import](https://github.com/jbilee/woowa-test-notes/edit/main/README.md#missionutils-import)
-  - [Read input](https://github.com/jbilee/woowa-test-notes/edit/main/README.md#read-input)
-  - [Output view](https://github.com/jbilee/woowa-test-notes/edit/main/README.md#output-view)
+  - [MissionUtils import](https://github.com/jbilee/woowa-test-notes#missionutils-import)
+  - [Read input](https://github.com/jbilee/woowa-test-notes#read-input)
+  - [Output view](https://github.com/jbilee/woowa-test-notes#output-view)
   - [Validator](https://github.com/jbilee/woowa-test-notes/edit/main/README.md#validator)
   - [Single-value enum](https://github.com/jbilee/woowa-test-notes/edit/main/README.md#single-value-enum)
   - [Multi-value enum](https://github.com/jbilee/woowa-test-notes/edit/main/README.md#multiple-value-enum)
