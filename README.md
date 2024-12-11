@@ -18,6 +18,7 @@
   - [Testing](https://github.com/jbilee/woowa-test-notes#testing)
 - __[File directory](https://github.com/jbilee/woowa-test-notes#file-directory)__
 - __[Working order](https://github.com/jbilee/woowa-test-notes#working-order)__
+- __[Priorities](https://github.com/jbilee/woowa-test-notes#priorities)__
 
 # Snippets
 
@@ -366,11 +367,17 @@ Run Gradle test with `gradlew.bat clean test` or `./gradlew.bat clean test`
 
 # Working order
 1. Write quick README based on reqs, make mental model of what I would need and try to digest reqs as fast as possible
-2. Create `ui` and `ui.constants` packages: InputView, OutputView, ErrorMessages, InputPrompts
-3. Create `utils` package: FileReader, etc.
-4. Create `helpers` package: Validation and project-specific data manipulation/formatting
-5. Create `domains` package: Sub-domains based on objects needed
-6. Make list of objects needed and draw out relationships between them (also check default tests)
-7. Update README while doing #6
+2. Draw diagrams; determine objects needed and draw out relationships between them (also check default tests, and update README if needed)
+3. Create `ui` and `ui.constants` packages: InputView, OutputView, ErrorMessages, InputPrompts
+4. Create `utils` package: FileReader, etc.
+5. Create `helpers` package: Validation and project-specific data manipulation/formatting
+6. Create `domains` package: Sub-domains based on objects needed
 
 ***Spend little time on validation = ignore edge cases for inputs
+
+# Priorities
+(If there isn't enough time left to do anything time-consuming like writing tests, refactoring main logic, etc.)
+1. Make sure 소감문 is finished
+2. Think of more intuitive names for functions and variables
+3. Split functions, if doable
+4. Cut down on indentation
