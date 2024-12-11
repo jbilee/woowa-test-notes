@@ -1,6 +1,5 @@
 # Quick jump
 - __Snippets__
-  - [MissionUtils import](https://github.com/jbilee/woowa-test-notes#missionutils-import)
   - [Read input](https://github.com/jbilee/woowa-test-notes#read-input)
   - [Output view](https://github.com/jbilee/woowa-test-notes#output-view)
   - [Input loop](https://github.com/jbilee/woowa-test-notes#input-loop)
@@ -9,6 +8,7 @@
   - [Multi-value enum](https://github.com/jbilee/woowa-test-notes#multi-value-enum)
   - [Error message enum](https://github.com/jbilee/woowa-test-notes#error-message-enum)
   - [File reader util](https://github.com/jbilee/woowa-test-notes#file-reader-util)
+  - [MissionUtils import](https://github.com/jbilee/woowa-test-notes#missionutils-import)
 - __How to use Java__
   - [List](https://github.com/jbilee/woowa-test-notes#list)
   - [Map](https://github.com/jbilee/woowa-test-notes#map)
@@ -22,22 +22,26 @@
 
 # Snippets
 
-## MissionUtils import
-```java
-import camp.nextstep.edu.missionutils.Console;
-```
-```java
-import camp.nextstep.edu.missionutils.Randoms;
-```
-```java
-import camp.nextstep.edu.missionutils.DateTimes;
-```
-
 ## Read input
 ```java
+public enum InputPrompts {
+    A_PROMPT(""),
+    B_PROMPT("");
+
+    private final String text;
+
+    InputPrompts(String text) {
+        this.text = text;
+    }
+
+    public String getText() {
+        return text;
+    }
+}
+
 public class InputView {
-    public String readOrder() {
-        System.out.println(InputPrompts.PURCHASE.getPrompt());
+    public String read() {
+        System.out.println(InputPrompts.KEY.getPrompt());
         return Console.readLine().strip();
     }
 }
@@ -232,6 +236,17 @@ public class ApplicationConfig {
 }
 ```
 
+## MissionUtils import
+```java
+import camp.nextstep.edu.missionutils.Console;
+```
+```java
+import camp.nextstep.edu.missionutils.Randoms;
+```
+```java
+import camp.nextstep.edu.missionutils.DateTimes;
+```
+
 # Java notes
 ## List
 Create a list
@@ -377,7 +392,9 @@ Run Gradle test with `gradlew.bat clean test` or `./gradlew.bat clean test`
 
 # Priorities
 (If there isn't enough time left to do anything time-consuming like writing tests, refactoring main logic, etc.)
-1. Make sure 소감문 is finished
+1. Spend ~10 mins on 소감문
 2. Think of more intuitive names for functions and variables
 3. Split functions, if doable
 4. Cut down on indentation
+
+https://www.protectedtext.com/dydk1215
