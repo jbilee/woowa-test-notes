@@ -14,6 +14,7 @@
   - [List](https://github.com/jbilee/woowa-test-notes#list)
   - [Map](https://github.com/jbilee/woowa-test-notes#map)
   - [Stream](https://github.com/jbilee/woowa-test-notes#stream)
+  - [LocalDate](https://github.com/jbilee/woowa-test-notes#localdate)
   - [Text formatting](https://github.com/jbilee/woowa-test-notes#text-formatting)
   - [Testing](https://github.com/jbilee/woowa-test-notes#testing)
 
@@ -238,14 +239,20 @@ Create a list
 List<String> letters = List.of("a", "b"); // Or pass in regular Array []
 ```
 ```java
-private List<String> itemNames = new ArrayList<>(); // Declare an empty List
+private List<String> itemNames = new ArrayList<>(); // Declare a mutable empty List
+private List<String> itemNames = new ArrayList<>(List.of("name")); // Declare a mutable filled list
 ```
+If you create a List using `List.of()`, you're creating an __immutable List__--you can't add items to it later using `.add()`
 
 ## Map
 Create a map
 ```java
 private Map<String, List<String>> eventItems = new HashMap<>(); // Declare an empty Map
 ```
+```java
+private Map<String, Integer> test = Map.of("key1", 1, "key2", 2, "key3", 3);
+```
+Like Lists, if you create a Map using `Map.of()`, you're creating an __immutable Map__.
 
 ## Stream
 Filter
@@ -258,10 +265,40 @@ Count the number of unique values in a List<T>
 numbers.stream().distinct().count();
 ```
 
+## LocalDate
+Create a LocalDate
+```java
+// Directly
+LocalDate myDate = LocalDate.of(2024, 12, 31);
+```
+```java
+// From a string
+String dateString = "2024-12-31";
+LocalDate myDate = LocalDate.parse(dateString);
+```
+
+Get the date's corresponding week of month
+```java
+LocalDate myDate = LocalDate.of(2024, 12, 11);
+int weekOfMonth = myDate.get(WeekFields.of(Locale.getDefault()).weekOfMonth());
+System.out.println(weekOfMonth); // 2
+```
+
 ## Text formatting
 Turn integer into string with commas
 ```java
 String.format("%,d", value_to_format);
+```
+```java
+// Where `moneys` is a List<String>
+moneys.stream().mapToInt(Integer::parseInt).forEach(money -> {
+    System.out.println(String.format("%,d", money));
+});
+
+// Where `moneys` is a List<Integer>
+moneys.stream().mapToInt(Integer::intValue).forEach(money -> {
+    System.out.println(String.format("%,d", money));
+});
 ```
 
 ## Testing
