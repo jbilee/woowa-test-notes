@@ -9,7 +9,6 @@
   - [Multi-value enum](https://github.com/jbilee/woowa-test-notes#multi-value-enum)
   - [Error message enum](https://github.com/jbilee/woowa-test-notes#error-message-enum)
   - [File reader util](https://github.com/jbilee/woowa-test-notes#file-reader-util)
-
 - __How to use Java__
   - [List](https://github.com/jbilee/woowa-test-notes#list)
   - [Map](https://github.com/jbilee/woowa-test-notes#map)
@@ -17,8 +16,8 @@
   - [LocalDate](https://github.com/jbilee/woowa-test-notes#localdate)
   - [Text formatting](https://github.com/jbilee/woowa-test-notes#text-formatting)
   - [Testing](https://github.com/jbilee/woowa-test-notes#testing)
-
 - __[File directory](https://github.com/jbilee/woowa-test-notes#file-directory)__
+- __[Working order](https://github.com/jbilee/woowa-test-notes#working-order)__
 
 # Snippets
 
@@ -213,7 +212,7 @@ public class DataHandler {
     public Stream<String> readData(String path) {
         FileReader reader = new FileReader();
         List<String> content = reader.readContent(path);
-        return content.stream().skip(HEADERS); // Select up to how many rows of data to skip
+        return content.stream().skip(HEADERS); // If needed, select up to how many rows of data to skip
     }
 }
 ```
@@ -258,6 +257,12 @@ Like Lists, if you create a Map using `Map.of()`, you're creating an __immutable
 Filter
 ```java
 List<Integer> matchingNumbers = winningNumbers.stream().filter(number -> this.numbers.contains(number)).toList();
+```
+
+Convert list items to primitive integers for mathematical operations
+```java
+// Where `items` is a Map of Integer objects
+items.values().stream().mapToInt(Integer::intValue).sum();
 ```
 
 Count the number of unique values in a List<T>
@@ -358,3 +363,14 @@ Run Gradle test with `gradlew.bat clean test` or `./gradlew.bat clean test`
 
 # File directory
 ![image](https://github.com/user-attachments/assets/1e77df19-d61a-40f4-8ccf-6803b6fc2131)
+
+# Working order
+1. Write quick README based on reqs, make mental model of what I would need and try to digest reqs as fast as possible
+2. Create `ui` and `ui.constants` packages: InputView, OutputView, ErrorMessages, InputPrompts
+3. Create `utils` package: FileReader, etc.
+4. Create `helpers` package: Validation and project-specific data manipulation/formatting
+5. Create `domains` package: Sub-domains based on objects needed
+6. Make list of objects needed and draw out relationships between them (also check default tests)
+7. Update README while doing #6
+
+***Spend little time on validation = ignore edge cases for inputs
