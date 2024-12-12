@@ -1,15 +1,15 @@
 # Quick jump
 - __Snippets__
-  - [Read input](https://github.com/jbilee/woowa-test-notes#read-input)
+  - [Read input (loop)](https://github.com/jbilee/woowa-test-notes#read-input-loop)
   - [Output view](https://github.com/jbilee/woowa-test-notes#output-view)
-  - [Input loop](https://github.com/jbilee/woowa-test-notes#input-loop)
-  - [Regex-based validator](https://github.com/jbilee/woowa-test-notes#regex-based-validator)
-  - [Single-value enum](https://github.com/jbilee/woowa-test-notes#single-value-enum)
+  - [Self-validating object](https://github.com/jbilee/woowa-test-notes#self-validating-object)
+  - [Split util](https://github.com/jbilee/woowa-test-notes#split-util)
   - [Multi-value enum](https://github.com/jbilee/woowa-test-notes#multi-value-enum)
   - [Error message enum](https://github.com/jbilee/woowa-test-notes#error-message-enum)
+  - [Regex-based validator](https://github.com/jbilee/woowa-test-notes#regex-based-validator)
   - [File reader util](https://github.com/jbilee/woowa-test-notes#file-reader-util)
   - [MissionUtils import](https://github.com/jbilee/woowa-test-notes#missionutils-import)
-- __How to use Java__
+- __Java notes__
   - [List](https://github.com/jbilee/woowa-test-notes#list)
   - [Map](https://github.com/jbilee/woowa-test-notes#map)
   - [Stream](https://github.com/jbilee/woowa-test-notes#stream)
@@ -22,8 +22,9 @@
 
 # Snippets
 
-## Read input
+## Read input (loop)
 ```java
+// Prompt enum
 public enum InputPrompts {
     A_PROMPT(""),
     B_PROMPT("");
@@ -39,6 +40,7 @@ public enum InputPrompts {
     }
 }
 
+// View
 public class InputView {
     public String read() {
         System.out.println(InputPrompts.KEY.getPrompt());
@@ -46,22 +48,6 @@ public class InputView {
     }
 }
 ```
-
-## Output view
-```java
-public class OutputView {
-    public void printPurchasedItemLine(String name, int quantity, int cost) {
-        System.out.println(name + "\t\t\t" + quantity + "\t\t\t" + String.format("%,d", cost));
-    }
-
-    public void printInventory(List<Product> products) {
-        System.out.println(InventoryUi.GREETING.getText());
-        products.forEach(product -> System.out.println(product.getPrintableString()));
-    }
-}
-```
-
-## Input loop
 ```java
 public void handleOrder() {
     while (true) {
@@ -81,6 +67,7 @@ public void saveOrderToCart() {
 }
 ```
 ```java
+// Loop
 public boolean handleContinue() {
     while (true) {
         try {
@@ -99,6 +86,132 @@ public boolean getContinueSelection() {
 }
 ```
 
+## Output view
+```java
+public class OutputView {
+    public void printPurchasedItemLine(String name, int quantity, int cost) {
+        System.out.println(name + "\t\t\t" + quantity + "\t\t\t" + String.format("%,d", cost));
+    }
+
+    public void printInventory(List<Product> products) {
+        System.out.println(InventoryUi.GREETING.getText());
+        products.forEach(product -> System.out.println(product.getPrintableString()));
+    }
+}
+```
+
+## Self-validating object
+```java
+public class Lotto {
+    private final List<Integer> numbers;
+
+    public Lotto(List<Integer> numbers) {
+        validate(numbers);
+        this.numbers = numbers;
+    }
+
+    private void validate(List<Integer> numbers) {
+        if (numbers.size() != LottoValues.LOTTO_SIZE.getValue()) {
+            throw new IllegalArgumentException(ErrorMessages.INCORRECT_LOTTO_SIZE.getMessage());
+        }
+        if (numbers.stream().distinct().count() != LottoValues.LOTTO_SIZE.getValue()) {
+            throw new IllegalArgumentException(ErrorMessages.LOTTO_NUMBER_CONTAINS_DUPLICATE.getMessage());
+        }
+        if (numbers.stream().anyMatch(number -> number > LottoValues.MAX_NUMBER.getValue())) {
+            throw new IllegalArgumentException(ErrorMessages.LOTTO_NUMBER_NOT_WITHIN_RANGE.getMessage());
+        }
+        if (numbers.stream().anyMatch(number -> number < LottoValues.MIN_NUMBER.getValue())) {
+            throw new IllegalArgumentException(ErrorMessages.LOTTO_NUMBER_NOT_WITHIN_RANGE.getMessage());
+        }
+    }
+}
+```
+
+## Split util
+```java
+public class Split {
+    private final static String DELIMITER = ",";
+
+    public static List<String> getAsList(String string, boolean checkUniqueness) {
+        List<String> result = List.of(string.split(DELIMITER));
+        if (checkUniqueness) {
+            int count = result.size();
+            int uniqueCount = (int) result.stream().distinct().count();
+            if (count != uniqueCount) {
+                throw new IllegalArgumentException(ErrorMessages.INVALID.getMessage());
+            }
+        }
+        return result;
+    }
+}
+```
+
+## Multi-value enum
+```java
+// Enum
+public enum MenuItems {
+    JP("일식", List.of("규동, 우동, 미소시루, 스시, 가츠동, 오니기리, 하이라이스, 라멘, 오코노미야끼".split(", "))),
+    NONE("없음", Collections.EMPTY_LIST);
+
+    private final String category;
+    private final List<String> items;
+
+    MenuItems(String category, List<String> items) {
+        this.category = category;
+        this.items = items;
+    }
+
+    public static MenuItems findByItem(String name) {
+        return Arrays.stream(MenuItems.values())
+                .filter(category -> category.hasItem(name))
+                .findAny()
+                .orElse(NONE);
+                // OR throw right away
+                .orElseThrow(() -> new IllegalArgumentException(""));
+    }
+
+    public boolean hasItem(String name) {
+        return items.stream().anyMatch(item -> item.equals(name));
+    }
+
+    public String getCategory() {
+        return category;
+    }
+}
+
+// Check if something in enum exists
+MenuItems result = MenuItems.findByItem(name);
+if (result.getCategory().equals("없음")) {
+    throw new IllegalArgumentException(ErrorMessages.INVALID.getMessage());
+}
+
+// Print in order
+public void printLottoResults(LottoResults lottoResults) {
+    RewardTable[] rewardTableKeys = RewardTable.values();
+    for (RewardTable key : rewardTableKeys) {
+        int value = lottoResults.getMatchValue(key);
+        System.out.println(key.getLabel() + value + ResultText.COUNT_SUFFIX.getText());
+    }
+}
+```
+
+## Error message enum
+```java
+public enum ErrorMessages {
+    INVALID("[ERROR] 잘못된 입력입니다. 다시 입력해 주세요.");
+
+    private final String message;
+
+    ErrorMessages(String message) {
+        this.message = message;
+    }
+
+    public String getMessage() {
+        return message;
+    }
+}
+```
+
 ## Regex-based validator
 ```java
 public class SelectionValidator {
@@ -110,73 +223,6 @@ public class SelectionValidator {
         if (!matcher.find()) {
             throw new IllegalArgumentException(ErrorMessages.INVALID.getMessage());
         }
-    }
-}
-```
-
-## Single-value enum
-```java
-public enum InventoryUi {
-    NAME("text");
-
-    private final String text;
-
-    InventoryUi(String text) {
-        this.text = text;
-    }
-
-    public String getText() {
-        return text;
-    }
-}
-```
-
-## Multi-value enum
-```java
-public enum RewardTable {
-    NAME(0, 0, "text");
-
-    private final int matches;
-    private final int rewardAmount;
-    private final String label;
-
-    RewardTable(int matches, int rewardAmount, String label) {
-        this.matches = matches;
-        this.rewardAmount = rewardAmount;
-        this.label = label;
-    }
-
-    public int getMatches() {
-        return matches;
-    }
-
-    public int getRewardAmount() {
-        return rewardAmount;
-    }
-
-    public String getLabel() {
-        return label;
-    }
-}
-```
-
-## Error message enum
-```java
-public enum ErrorMessages {
-    INVALID("[ERROR] 잘못된 입력입니다. 다시 입력해 주세요."),
-    NO_DATA("[ERROR] 데이터 파일을 찾을 수 없어 프로그램을 종료합니다. resources 파일 경로를 확인해 주세요."),
-    NO_PRODUCT("[ERROR] 존재하지 않는 상품입니다. 다시 입력해 주세요."),
-    NO_STOCK("[ERROR] 재고 수량을 초과하여 구매할 수 없습니다. 다시 입력해 주세요."),
-    WRONG_FORMAT("[ERROR] 올바르지 않은 형식으로 입력했습니다. 다시 입력해 주세요.");
-
-    private final String message;
-
-    ErrorMessages(String message) {
-        this.message = message;
-    }
-
-    public String getMessage() {
-        return message;
     }
 }
 ```
@@ -294,8 +340,7 @@ LocalDate myDate = LocalDate.of(2024, 12, 31);
 ```
 ```java
 // From a string
-String dateString = "2024-12-31";
-LocalDate myDate = LocalDate.parse(dateString);
+LocalDate myDate = LocalDate.parse("2024-12-31");
 ```
 
 Get the date's corresponding week of month
@@ -385,16 +430,17 @@ Run Gradle test with `gradlew.bat clean test` or `./gradlew.bat clean test`
 2. Draw diagrams; determine objects needed and draw out relationships between them (also check default tests, and update README if needed)
 3. Create `ui` and `ui.constants` packages: InputView, OutputView, ErrorMessages, InputPrompts
 4. Create `utils` package: FileReader, etc.
-5. Create `helpers` package: Validation and project-specific data manipulation/formatting
-6. Create `domains` package: Sub-domains based on objects needed
+5. Create `helpers` package: Project-specific data manipulation/formatting
+6. Create `domains` package: Sub-domains based on objects needed (validate here directly in smaller objects)
 
 ***Spend little time on validation = ignore edge cases for inputs
 
 # Priorities
 (If there isn't enough time left to do anything time-consuming like writing tests, refactoring main logic, etc.)
-1. Spend ~10 mins on 소감문
-2. Think of more intuitive names for functions and variables
-3. Split functions, if doable
-4. Cut down on indentation
+1. Split functions, if simple enough
+2. Write simple tests
+3. Think of more intuitive names for functions and variables
+4. Spend ~10 mins on 소감문
+5. Cut down on indentation
 
 https://www.protectedtext.com/dydk1215
