@@ -465,6 +465,11 @@ class ApplicationTest extends NsTest {
 ```
 Run Gradle test with `gradlew.bat clean test` or `./gradlew.bat clean test`
 
+- Possible tests
+  - Return value in an enum
+  - Return value of a simple calculation
+  - Testing validation logic in a self-validating object, assert throws
+
 # File directory
 ![image](https://github.com/user-attachments/assets/1e77df19-d61a-40f4-8ccf-6803b6fc2131)
 
