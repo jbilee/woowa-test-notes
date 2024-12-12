@@ -9,6 +9,7 @@
   - [Regex-based validator](https://github.com/jbilee/woowa-test-notes#regex-based-validator)
   - [File reader util](https://github.com/jbilee/woowa-test-notes#file-reader-util)
   - [MissionUtils import](https://github.com/jbilee/woowa-test-notes#missionutils-import)
+  - [README](https://github.com/jbilee/woowa-test-notes#readme)
 - __Java notes__
   - [List](https://github.com/jbilee/woowa-test-notes#list)
   - [Map](https://github.com/jbilee/woowa-test-notes#map)
@@ -47,42 +48,17 @@ public class InputView {
         return Console.readLine().strip();
     }
 }
-```
-```java
-public void handleOrder() {
-    while (true) {
-        try {
-            saveOrderToCart();
-            break;
-        } catch (IllegalArgumentException e) {
-            System.out.println(e.getMessage());
-        }
-    }
-}
 
-public void saveOrderToCart() {
-    String order = inputView.readOrder();
-    // Other logic
-    // Throw error here for `handleOrder` to catch and display error message
-}
-```
-```java
 // Loop
-public boolean handleContinue() {
-    while (true) {
-        try {
-            return getContinueSelection();
-        } catch (IllegalArgumentException e) {
-            System.out.println(e.getMessage());
-        }
+private static String getWeekdayNames(InputView inputView, Validator validator) {
+    try {
+        String nameInput = inputView.readWeekdayNames();
+        validator.checkNames(nameInput);
+        return nameInput;
+    } catch (IllegalArgumentException e) {
+        System.out.println(e.getMessage());
+        return getWeekdayNames(inputView, validator);
     }
-}
-
-public boolean getContinueSelection() {
-    SelectionValidator validator = new SelectionValidator();
-    String input = inputView.readContinueSelection();
-    validator.validate(input);
-    return input.equalsIgnoreCase("Y");
 }
 ```
 
@@ -162,7 +138,7 @@ public enum MenuItems {
     }
 
     public static MenuItems findByItem(String name) {
-        return Arrays.stream(MenuItems.values())
+        return Arrays.stream(MenuItems.values()) // OR Stream.of(MenuItems.values())
                 .filter(category -> category.hasItem(name))
                 .findAny()
                 .orElse(NONE);
@@ -293,6 +269,23 @@ import camp.nextstep.edu.missionutils.Randoms;
 import camp.nextstep.edu.missionutils.DateTimes;
 ```
 
+## README
+```
+# 구현할 기능 목록
+
+### 입력 및 입력값 검증 기능
+- [ ] 입력 받는다
+  - [ ] 지 검증한다
+  - [ ] 지 검증한다
+- [ ] 입력값이 유효하지 않을 경우 오류 메세지를 출력하고 입력을 다시 받는다
+
+### 관련 기능
+- [ ] 
+
+### 출력 기능
+- [ ] 출력한다
+```
+
 # Java notes
 ## List
 Create a list
@@ -304,6 +297,17 @@ private List<String> itemNames = new ArrayList<>(); // Declare a mutable empty L
 private List<String> itemNames = new ArrayList<>(List.of("name")); // Declare a mutable filled list
 ```
 If you create a List using `List.of()`, you're creating an __immutable List__--you can't add items to it later using `.add()`
+
+Comparing two Lists to check if they both contain the same objects
+```java
+List<String> arr1 = new ArrayList<>(List.of("a", "b", "c")); // Need to create new ArrayList<>() so that it can be mutated
+List<String> arr2 = List.of("a", "c", "b");
+List<String> arr3 = List.of("a", "b", "e");
+
+System.out.println(arr1.retainAll(arr2)); // false
+System.out.println(arr1.retainAll(arr3)); // true
+System.out.println(arr1.toString()); // [a, b]
+```
 
 ## Map
 Create a map
@@ -330,6 +334,12 @@ items.values().stream().mapToInt(Integer::intValue).sum();
 Count the number of unique values in a List<T>
 ```java
 numbers.stream().distinct().count();
+```
+
+Combining lists
+```java
+Stream.concat(list1.stream(), list2.stream())
+      .collect(Collectors.toList());
 ```
 
 ## LocalDate
@@ -420,27 +430,61 @@ class EventTest {
     }
 }
 ```
+
+Testing output
+```java
+import static camp.nextstep.edu.missionutils.test.Assertions.assertSimpleTest;
+import static org.assertj.core.api.Assertions.assertThat;
+
+import camp.nextstep.edu.missionutils.test.NsTest;
+import org.junit.jupiter.api.Test;
+
+class ApplicationTest extends NsTest {
+    private static final String LINE_SEPARATOR = System.lineSeparator();
+
+    @Test
+    void 예외_테스트() {
+        assertSimpleTest(() -> {
+            run("0,일",
+                    "4,토",
+                    "허브,쥬니,말랑,라온,헤나,우코,에단,수달,파워,히이로,마코,슬링키,모디,연어,깃짱,리오,고니,박스터,달리,조이,노아이즈,도이,도치,홍고,스캇,폴로,해시,로지,첵스,아이크,우가,푸만능,애쉬,로이스,오션",
+                    "오션,로이스,애쉬,푸만능,우가,아이크,첵스,로지,해시,폴로,스캇,홍고,도치,도이,노아이즈,조이,달리,박스터,고니,리오,깃짱,연어,모디,슬링키,마코,히이로,파워,수달,에단,우코,헤나,라온,말랑,쥬니,허브"
+            );
+            assertThat(output()).contains(
+                    "[ERROR]",
+                    "4월 1일 토 오션" + LINE_SEPARATOR
+            );
+        });
+    }
+
+    @Override
+    protected void runMain() {
+        Application.main(new String[]{});
+    }
+}
+```
 Run Gradle test with `gradlew.bat clean test` or `./gradlew.bat clean test`
 
 # File directory
 ![image](https://github.com/user-attachments/assets/1e77df19-d61a-40f4-8ccf-6803b6fc2131)
 
 # Working order
-1. Write quick README based on reqs, make mental model of what I would need and try to digest reqs as fast as possible
-2. Draw diagrams; determine objects needed and draw out relationships between them (also check default tests, and update README if needed)
-3. Create `ui` and `ui.constants` packages: InputView, OutputView, ErrorMessages, InputPrompts
-4. Create `utils` package: FileReader, etc.
-5. Create `helpers` package: Project-specific data manipulation/formatting
-6. Create `domains` package: Sub-domains based on objects needed (validate here directly in smaller objects)
+1. Set build tool to IntelliJ
+2. Write quick README based on reqs, make mental model of what I would need and try to digest reqs as fast as possible
+3. Draw diagrams; determine objects needed and draw out relationships between them (also check default tests, and update README if needed)
+4. Create `ui` and `ui.constants` packages: InputView, OutputView, ErrorMessages, InputPrompts
+5. Create `domains` package: Sub-domains based on objects needed (validate here directly in smaller objects)
+6. Create `helpers` package: Project-specific data manipulation/formatting
+7. (Optional) Create `utils` package: FileReader, etc.
 
 ***Spend little time on validation = ignore edge cases for inputs
 
 # Priorities
-(If there isn't enough time left to do anything time-consuming like writing tests, refactoring main logic, etc.)
-1. Split functions, if simple enough
+(If there isn't enough time left to do anything time-consuming like writing intricate tests, refactoring main logic, etc.)
+1. Split functions
 2. Write simple tests
-3. Think of more intuitive names for functions and variables
-4. Spend ~10 mins on 소감문
-5. Cut down on indentation
+3. Cut down on indentation
+4. Think of more intuitive names for functions and variables
+5. Spend ~10 mins on 소감문
 
 https://www.protectedtext.com/dydk1215
