@@ -14,6 +14,7 @@
   - [List](https://github.com/jbilee/woowa-test-notes#list)
   - [Map](https://github.com/jbilee/woowa-test-notes#map)
   - [Stream](https://github.com/jbilee/woowa-test-notes#stream)
+  - [Collections](https://github.com/jbilee/woowa-test-notes#collections)
   - [LocalDate](https://github.com/jbilee/woowa-test-notes#localdate)
   - [Text formatting](https://github.com/jbilee/woowa-test-notes#text-formatting)
   - [Testing](https://github.com/jbilee/woowa-test-notes#testing)
@@ -27,8 +28,8 @@
 ```java
 // Prompt enum
 public enum InputPrompts {
-    A_PROMPT(""),
-    B_PROMPT("");
+    A(""),
+    B("");
 
     private final String text;
 
@@ -108,7 +109,7 @@ public class Lotto {
 public class Split {
     private final static String DELIMITER = ",";
 
-    public static List<String> getAsList(String string, boolean checkUniqueness) {
+    public static List<String> toList(String string, boolean checkUniqueness) {
         List<String> result = List.of(string.split(DELIMITER));
         if (checkUniqueness) {
             int count = result.size();
@@ -342,6 +343,27 @@ Stream.concat(list1.stream(), list2.stream())
       .collect(Collectors.toList());
 ```
 
+## Collections
+Switch places in a list (list must be mutable)
+```java
+Collections.swap(list, 1, 2); // index 1 goes to 2, 2 goes to 1
+```
+
+Check if two collections have a value(or reference to a value, if an object) in common (alternative to `List.retainAll()`)
+```java
+Collections.disjoint(list1, list2); // `true` if no common element, `false` if common element
+```
+
+Shift(rotate) element placements of a mutable list (positive=right, negative=left)
+```java
+List<Integer> list = new ArrayList<>(List.of(1, 2, 3, 4, 5));
+Collections.rotate(list, 2);
+System.out.println(list); // [4, 5, 1, 2, 3]
+
+Collections.rotate(list, -3);
+System.out.println(list); // [2, 3, 4, 5, 1]
+```
+
 ## LocalDate
 Create a LocalDate
 ```java
@@ -493,3 +515,5 @@ Run Gradle test with `gradlew.bat clean test` or `./gradlew.bat clean test`
 5. Spend ~10 mins on 소감문
 
 https://www.protectedtext.com/dydk1215
+
+No line found Console error = my code expects input but there isn't one provided
