@@ -18,7 +18,7 @@
   - [LocalDate](https://github.com/jbilee/woowa-test-notes#localdate)
   - [Text formatting](https://github.com/jbilee/woowa-test-notes#text-formatting)
   - [Testing](https://github.com/jbilee/woowa-test-notes#testing)
-- __[File directory](https://github.com/jbilee/woowa-test-notes#file-directory)__
+- __[Structure](https://github.com/jbilee/woowa-test-notes#structure)__
 - __[Working order](https://github.com/jbilee/woowa-test-notes#working-order)__
 - __[Priorities](https://github.com/jbilee/woowa-test-notes#priorities)__
 
@@ -45,12 +45,12 @@ public enum InputPrompts {
 // View
 public class InputView {
     public String read() {
-        System.out.println(InputPrompts.KEY.getPrompt());
+        System.out.println(InputPrompts.KEY.getText());
         return Console.readLine().strip();
     }
 }
 
-// Loop
+// Handler
 private static String getWeekdayNames(InputView inputView, Validator validator) {
     try {
         String nameInput = inputView.readWeekdayNames();
@@ -153,6 +153,13 @@ public enum MenuItems {
 
     public String getCategory() {
         return category;
+    }
+
+    public static MenuItems getCategoryByName(String categoryName) {
+        return Arrays.stream(MenuItems.values())
+                .filter(menuItems -> menuItems.getCategory().equals(categoryName))
+                .findAny()
+                .orElseThrow(() -> new IllegalArgumentException(""));
     }
 }
 
@@ -493,6 +500,10 @@ Run Gradle test with `gradlew.bat clean test` or `./gradlew.bat clean test`
   - Testing validation logic in a self-validating object, assert throws
 
 # File directory
+```java
+// Large app with different "menus"
+  ㄴ Controller per menu "action" with `run()` method (inject inputHandler to controller)
+```
 ![image](https://github.com/user-attachments/assets/1e77df19-d61a-40f4-8ccf-6803b6fc2131)
 
 # Working order
@@ -502,7 +513,10 @@ Run Gradle test with `gradlew.bat clean test` or `./gradlew.bat clean test`
 4. Create `ui` and `ui.constants` packages: InputView, OutputView, ErrorMessages, InputPrompts
 5. Create `domains` package: Sub-domains based on objects needed (validate here directly in smaller objects)
 6. Create `helpers` package: Project-specific data manipulation/formatting
-7. (Optional) Create `utils` package: FileReader, etc.
+7. Create `ServiceController`
+8. (Optional) Create `utils` package: FileReader, etc.
+9. Work on core logic first as an isolated method
+10. Create objects to store data
 
 ***Spend little time on validation = ignore edge cases for inputs
 
